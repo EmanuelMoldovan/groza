@@ -4,7 +4,8 @@
       app
       color="primary"
       dark
-    >      
+    >   
+    Tic Tac Toe   
     </v-app-bar>
 
     <v-content>

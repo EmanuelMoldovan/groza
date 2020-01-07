@@ -2,19 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        What do you want to be ?
-      </v-col>
-
-      <v-col>
-        <v-radio-group v-model="human" row hide-details dense class="mt-0">
-          <v-radio label="X" value="x"></v-radio>
-          <v-radio label="0" value="0"></v-radio>
-        </v-radio-group>
-      </v-col>
-
-      <v-col>
         <v-btn @click="reset()" outlined>Reset</v-btn>
-        <v-btn @click="isStarted = true" class="primary">Start</v-btn>
       </v-col>
     </v-row>
 
@@ -24,7 +12,7 @@
 
     <v-row v-for="(row, i) in board" :key="i" align="center" justify="center">
       <v-col v-for="(col, j) in row" :key="j">
-        <v-card @click="onBoxClick(i, j)" tile height="150" width="150" class="text-center center" :disabled="!isStarted">
+        <v-card @click="onBoxClick(i, j)" tile height="150" width="150" class="text-center center">
             <v-icon size="80">{{col === 'x' ? 'fas fa-times' : col === '0' ? 'far fa-circle' : ''}}</v-icon>         
         </v-card>
       </v-col>
@@ -37,12 +25,7 @@
 export default {
   data() {
     return {
-      board: [
-        ['', '', ''],
-        ['', '', ''],
-        ['', '', '']
-      ],
-      isStarted: false,
+      board: ['', '', '', '', '', '', '', '', ''],
       human: '',
       scores: {
         x: 1,
@@ -50,6 +33,11 @@ export default {
         tie: 0
       }
     }
+  },
+
+  created() {    
+    this.human = '0';
+    this.playBot();
   },
 
   computed: {
@@ -65,10 +53,8 @@ export default {
 
     availableSpaces() {
       for (let i = 0; i < this.board.length; i ++) {
-        for (let j = 0; j < this.board.length; j ++) {
-          if (this.board[i][j] === '') {
-            return true;
-          }
+        if (this.board[i] === '') {
+          return true;
         }
       }
 
@@ -78,8 +64,9 @@ export default {
 
   methods: {
     onBoxClick(i, j) { 
-      if (this.board[i][j] !== '') return;
-      this.setBox(i, j, this.human);   
+      if (this.board[i] !== '') return;
+      this.board[i] = this.human;
+      //this.setBox(i, j, this.human);   
       if (this.checkWinner() === null) {
         this.playBot();
       } else {
@@ -87,11 +74,10 @@ export default {
       }      
     },
 
-    setBox(i, j, player) {
+    setBox(i, player) {
       const newRow = this.board[i].slice(0)
-      newRow[j] = player
+      newRow = player
       this.$set(this.board, i, newRow);
-      console.log(this.board);
     },
 
     equals3(a, b, c) {
@@ -120,8 +106,7 @@ export default {
         winner = this.board[0][2];
       }
 
-
-      if (winner == null && !this.availableSpaces ) {
+      if (winner === null && !this.availableSpaces ) {
         return 'tie';
       } else {
         return winner;
@@ -135,19 +120,20 @@ export default {
         ['', '', '']
       ];
 
-      this.human = '';
-      this.isStarted = false;     
+      this.human = '0'; 
+      
+      this.playBot();
     },
 
     playBot() {
       let bestScore = -Infinity;
       let move;
-      for (let i = 0; i < 3; i ++) {
-        for (let j = 0; j < 3; j ++) {
-          if (this.board[i][j] === '') {
-            this.setBox(i, j, this.bot);
-            let score = this.minimax(this.board.slice(0), 0, true);
-            this.setBox(i, j, '');
+      for (let i = 0; i < this.board.length; i ++) {
+        for (let j = 0; j < this.board.length; j ++) {
+          if (this.board[i] === '') {
+            this.board[i] = this.bot;
+            let score = this.minimax(this.board, 0, false);
+            this.board[i] = '';
             if (score > bestScore) {
               bestScore = score;
               move = {i, j};
@@ -155,7 +141,8 @@ export default {
           }
         }
       }
-      this.setBox(move.i, move.j, this.bot);
+      //this.setBox(move.i, move.j, this.bot);
+      this.board[move.i][move.j] = this.bot;
     },
 
     minimax(board, depth, isMaximizing) {
@@ -167,12 +154,12 @@ export default {
 
       if (isMaximizing) {
         let bestScore = -Infinity;
-        for (let i = 0; i < 3; i ++) {
-          for (let j = 0; j < 3; j ++) {
-            if (board[i][j] === '') {
-              this.setBox(i, j, this.bot);
+        for (let i = 0; i < this.board.length; i ++) {
+          for (let j = 0; j < this.board.length; j ++) {
+            if (board[i] === '') {
+              board[i] = this.bot;
               let score = this.minimax(board, depth + 1, false);
-              this.setBox(i, j, '');
+              board[i] = '';
               bestScore = Math.max(score, bestScore);
             }
           }
@@ -180,12 +167,12 @@ export default {
         return bestScore;
       } else {
         let bestScore = Infinity;
-        for (let i = 0; i < 3; i ++) {
-          for (let j = 0; j < 3; j ++) {
-            if (board[i][j] === '') {
-              this.setBox(i, j, this.human);
+        for (let i = 0; i < this.board.length; i ++) {
+          for (let j = 0; j < this.board.length; j ++) {
+            if (board[i] === '') {
+              board[i] = this.human;
               let score = this.minimax(board, depth + 1, true);
-              this.setBox(i, j, '');
+              board[i] = '';
               bestScore = Math.min(score, bestScore);
             }
           }
