@@ -2,7 +2,7 @@
   "name": "testnode",
   "version": "1.0.0",
   "description": "Proiect Groza",
-  "main": "index.js",
+  "main": "dame.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
