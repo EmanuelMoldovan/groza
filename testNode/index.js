@@ -118,16 +118,16 @@ function minimax(board, depth, isMaximizing, alpha = -Infinity, beta = Infinity)
 }
 
 function printGameBoard() {
-    board.map((row, index) => {
-        if (index == 0) {
-            console.log(`     0   1   2  `);
-            console.log(`${index}`, row);
-        } else {
-            console.log(`${index}`, row);
-        }
-    })
+    // board.map((row, index) => {
+    //     if (index == 0) {
+    //         console.log(`     0   1   2  `);
+    //         console.log(`${index}`, row);
+    //     } else {
+    //         console.log(`${index}`, row);
+    //     }
+    // })
 
-    //console.table(board);
+    console.table(board);
 }
 
 const question = () => {

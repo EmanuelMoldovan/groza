@@ -16,10 +16,8 @@ var scores = {
     0: -10,
     tie: 0
 }
-var count = 0;
-
 var botMoves = [
-    {i: -1, j: 0}, {i: -1, j: 1}, {i: -1, j: -1}
+    {i: -1, j: 0}, {i: -1, j: 1}, {i: -1, j: -1}, {i: 0, j: -1}, {i: 0, j: 1}
 ]
 
 var humanMoves = [
@@ -88,16 +86,12 @@ function checkWinner() {
     if (board[board.length - 1].every(cell => cell === '0')) {
         winner = '0';
     }
-    //console.table(board);
     return winner;
 }
 
 function minimax(board, depth, isMaximizing, alpha = -Infinity, beta = Infinity) {
-    //console.log(count);
-    count ++;
     const winner = checkWinner();
     if (winner !== null) {
-        //console.log('winner', scores[winner]);
         return scores[winner];
     }
 
@@ -120,7 +114,6 @@ function minimax(board, depth, isMaximizing, alpha = -Infinity, beta = Infinity)
                 }
             }
         }
-        //console.log('Max best move', bestScore);
         return bestScore;
     } else {
         let bestScore = Infinity;
